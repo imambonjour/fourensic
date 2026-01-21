@@ -1,0 +1,12 @@
+node_modules
+npm-debug.log
+cache
+history_output.json
+logs
+current.json
+.git
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+.gemini
