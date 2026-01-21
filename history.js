@@ -104,9 +104,25 @@ async function loadHistory() {
                     <span class="history-file">${item.filename}</span>
                 </div>
                 <div class="history-action">
-                    <span class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Lihat Layout</span>
+                    <span class="btn-secondary view-btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; cursor: pointer;">Lihat Layout</span>
+                    <span class="btn-primary restore-btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; margin-left: 0.5rem; cursor: pointer;">Gunakan Ini</span>
                 </div>
             `;
+
+            const viewBtn = historyItem.querySelector('.view-btn');
+            const restoreBtn = historyItem.querySelector('.restore-btn');
+
+            viewBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showLayout(item.filename, dateStr);
+            });
+
+            restoreBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (confirm(`Apakah Anda yakin ingin mengembalikan konfigurasi dari ${dateStr}?`)) {
+                    restoreConfig(item.filename);
+                }
+            });
 
             historyItem.addEventListener('click', () => showLayout(item.filename, dateStr));
             listElement.appendChild(historyItem);
@@ -133,6 +149,25 @@ async function showLayout(filename, dateStr) {
         modal.style.display = 'block';
     } catch (error) {
         console.error("Error showing layout:", error);
+    }
+}
+
+async function restoreConfig(filename) {
+    try {
+        const response = await fetch(`/api/history/restore/${filename}`, {
+            method: 'POST'
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.details || 'Gagal mengembalikan konfigurasi');
+        }
+
+        alert('Konfigurasi berhasil dikembalikan! Mengalihkan ke halaman utama...');
+        window.location.href = 'index.html';
+    } catch (error) {
+        console.error("Error restoring config:", error);
+        alert(`Gagal: ${error.message}`);
     }
 }
 

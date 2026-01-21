@@ -155,6 +155,8 @@ async function saveSeatingPairs(pairs) {
         });
         if (!response.ok) throw new Error('Failed to save configuration to server');
         console.log("Config saved to server.");
+        // Reload to ensure state consistency
+        location.reload();
     } catch (error) {
         console.error("Error saving seating arrangement:", error);
     }
