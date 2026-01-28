@@ -181,8 +181,10 @@ app.post('/api/history/restore/:filename', async (req, res) => {
             const archivedFilename = `config-${timestamp}.json`;
             const archivedPath = path.join(CACHE_DIR, archivedFilename);
 
-            // Move the current file to cache
-            await fs.move(CURRENT_CONFIG_FILE, archivedPath, { overwrite: true });
+            // Copy the current file to cache instead of moving it
+            // (Moving/Unlinking is not allowed on mounted files in Docker)
+            const currentConfig = await fs.readJson(CURRENT_CONFIG_FILE);
+            await fs.writeJson(archivedPath, currentConfig, { spaces: 2 });
 
             const dateOptions = { timeZone: 'Asia/Jakarta', dateStyle: 'long', timeStyle: 'medium' };
             const logTime = new Intl.DateTimeFormat('id-ID', dateOptions).format(now);

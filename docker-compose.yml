@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  xi4seat:
+  fourensic:
     build: .
-    container_name: xi4seat-app
+    container_name: fourensic-app
     ports:
       - "3000:3000"
     volumes:
