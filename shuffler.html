@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xi4Seat • Welcome</title>
+    <title>Xi4Seat • Seating Shuffler</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -19,25 +19,24 @@
     </div>
 
     <main class="app-container">
-        <div class="hero-section">
-            <h1 class="app-title large-greeting">Welcome to XI-4 FOURENSIC</h1>
-            <p class="app-subtitle">Sistem Manajemen Tempat Duduk Digital untuk Kelas XI-4</p>
-
-            <div class="hero-content">
-                <p class="hero-description">
-                    Kelola dan acak tempat duduk kelas dengan mudah, adil, dan transparan.
-                    Klik tombol di bawah untuk mulai mengatur formasi tempat duduk.
-                </p>
-            </div>
-
-            <div class="header-actions hero-actions">
-                <a href="shuffler.html" class="btn-primary">Buka Seating Shuffler</a>
-                <a href="groups.html" class="btn-secondary">Group Maker</a>
+        <a href="index.html" class="btn-home" title="Kembali ke Beranda">🏠</a>
+        <header class="app-header">
+            <h1 class="app-title">Peta Tempat Duduk</h1>
+            <p class="app-subtitle">Siswa Kelas XI-4</p>
+            <div class="header-actions">
+                <button id="reshuffle-btn" class="btn-primary">Reshuffle Kursi</button>
                 <a href="history.html" class="btn-secondary">Lihat Riwayat</a>
             </div>
+        </header>
 
-        </div>
+        <section class="seating-section">
+            <div class="seating-grid" id="seating-chart">
+                <!-- Seating pairs will be rendered here -->
+            </div>
+        </section>
     </main>
+
+    <script src="script.js"></script>
 </body>
 
 </html>

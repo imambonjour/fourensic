@@ -105,6 +105,13 @@ body {
     margin-bottom: 4px;
 }
 
+.large-greeting {
+    font-size: 3.5rem;
+    line-height: 1.1;
+    margin-bottom: 12px;
+}
+
+
 .app-subtitle {
     color: var(--text-secondary);
     font-size: 0.9rem;
@@ -117,6 +124,172 @@ body {
     justify-content: center;
     margin-top: 1.5rem;
 }
+
+/* Hero Section */
+.hero-section {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--card-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    margin-top: 5vh;
+}
+
+.hero-content {
+    max-width: 600px;
+    margin: 0 auto 30px auto;
+}
+
+.hero-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.hero-actions {
+    margin-top: 2rem;
+}
+
+/* Group Maker Controls */
+.group-controls {
+    background: var(--card-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.input-group label {
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.input-group input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: var(--text-primary);
+    width: 80px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+/* Groups Layout */
+.groups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.group-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.group-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.group-header {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.group-header h3 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+}
+
+.member-count {
+    font-size: 0.8rem;
+    background: var(--primary-gradient);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.member-list {
+    list-style: none;
+    padding: 10px 0;
+}
+
+.member-item {
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.member-item:last-child {
+    border-bottom: none;
+}
+
+.member-name {
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+.gender-pill {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.member-item.L .gender-pill {
+    background: var(--male-bg);
+    color: var(--male-color);
+}
+
+.member-item.P .gender-pill {
+    background: var(--female-bg);
+    color: var(--female-color);
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+
 
 .btn-primary,
 .btn-secondary {
@@ -156,6 +329,32 @@ body {
 .btn-secondary:active {
     transform: translateY(0);
 }
+
+.btn-home {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 45px;
+    height: 45px;
+    background: var(--card-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    text-decoration: none;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.btn-home:hover {
+    background: var(--primary-gradient);
+    border-color: transparent;
+    transform: scale(1.1);
+}
+
 
 /* History List Styling */
 .history-list {
@@ -314,5 +513,9 @@ body {
 
     .app-title {
         font-size: 1.8rem;
+    }
+
+    .large-greeting {
+        font-size: 2.2rem;
     }
 }
