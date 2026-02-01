@@ -16,6 +16,8 @@ const CACHE_DIR = path.join(__dirname, 'cache');
 const LOG_FILE = path.join(__dirname, 'logs', 'reshuffle.log');
 const CURRENT_CONFIG_FILE = path.join(__dirname, 'current.json');
 const CURRENT_NAMES_FILE = path.join(__dirname, 'name.csv');
+const LOCK_FILE = path.join(__dirname, 'lock.json');
+const ADMIN_PASSWORD = 'xi4seat'; // Default password
 
 
 // Ensure directories exist
@@ -38,6 +40,56 @@ app.get('/api/names', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to read names from CSV' });
+    }
+});
+
+// Lock management
+async function getLockState() {
+    if (await fs.pathExists(LOCK_FILE)) {
+        const lock = await fs.readJson(LOCK_FILE);
+        const now = Date.now();
+        if (lock.locked && lock.unlockAt && now > lock.unlockAt) {
+            // Cooldown expired, auto-unlock
+            lock.locked = false;
+            await fs.writeJson(LOCK_FILE, lock, { spaces: 2 });
+        }
+        return lock;
+    }
+    return { locked: false, unlockAt: null };
+}
+
+app.get('/api/lock', async (req, res) => {
+    try {
+        const lockState = await getLockState();
+        res.json(lockState);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to get lock status' });
+    }
+});
+
+app.post('/api/lock', async (req, res) => {
+    try {
+        const { action, password } = req.body;
+        if (password !== ADMIN_PASSWORD) {
+            return res.status(403).json({ error: 'Invalid password' });
+        }
+
+        const lockState = await getLockState();
+        if (action === 'lock') {
+            const twoWeeksInMs = 14 * 24 * 60 * 60 * 1000;
+            const unlockAt = Date.now() + twoWeeksInMs;
+            const newState = { locked: true, unlockAt };
+            await fs.writeJson(LOCK_FILE, newState, { spaces: 2 });
+            res.json({ message: 'Configuration locked for 2 weeks', ...newState });
+        } else if (action === 'unlock') {
+            const newState = { locked: false, unlockAt: null };
+            await fs.writeJson(LOCK_FILE, newState, { spaces: 2 });
+            res.json({ message: 'Configuration unlocked', ...newState });
+        } else {
+            res.status(400).json({ error: 'Invalid action' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update lock status' });
     }
 });
 
@@ -67,6 +119,12 @@ app.get('/api/config/latest', async (req, res) => {
 // Save a new config
 app.post('/api/config', async (req, res) => {
     try {
+        // Check lock status before allowing save
+        const lockState = await getLockState();
+        if (lockState.locked) {
+            return res.status(403).json({ error: 'Configuration is locked. Reshuffle is not allowed.' });
+        }
+
         const config = req.body;
         const now = new Date();
 

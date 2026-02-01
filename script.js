@@ -1,5 +1,5 @@
-// --- 1. State ---
 let rawData = [];
+let lockState = { locked: false, unlockAt: null };
 
 
 // --- 2. Fungsi Pembantu (Helper Functions) ---
@@ -106,6 +106,24 @@ function renderSeatingChart(pairs) {
     });
 }
 
+function downloadAsImage() {
+    const seatingChart = document.getElementById('seating-chart');
+    if (!seatingChart) return;
+
+    // Use html2canvas to capture the seating chart
+    html2canvas(seatingChart, {
+        backgroundColor: null, // Transparent background if needed
+        scale: 2, // Higher quality
+        logging: false,
+        useCORS: true
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `denah-duduk-xi4-${new Date().toISOString().slice(0, 10)}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
+}
+
 // --- 4. Fungsi Persistence (Server API) ---
 
 async function saveSeatingPairs(pairs) {
@@ -148,17 +166,87 @@ async function loadNames() {
     }
 }
 
+async function getLockStatus() {
+    try {
+        const response = await fetch('/api/lock');
+        if (response.ok) {
+            lockState = await response.json();
+            updateLockUI();
+        }
+    } catch (error) {
+        console.error("Error fetching lock status:", error);
+    }
+}
+
+async function toggleLock() {
+    const action = lockState.locked ? 'unlock' : 'lock';
+    const password = prompt(`Masukkan password untuk ${action === 'lock' ? 'mengunci' : 'membuka kunci'}:`);
+
+    if (password === null) return; // Cancelled
+
+    try {
+        const response = await fetch('/api/lock', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action, password })
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            lockState = result;
+            alert(result.message);
+            updateLockUI();
+        } else {
+            alert(result.error || 'Terjadi kesalahan saat memproses kunci.');
+        }
+    } catch (error) {
+        console.error("Error toggling lock:", error);
+        alert('Gagal menghubungi server.');
+    }
+}
+
+function updateLockUI() {
+    const lockBtn = document.getElementById('lock-btn');
+    const reshuffleBtn = document.getElementById('reshuffle-btn');
+    if (!lockBtn) return;
+
+    if (lockState.locked) {
+        const remainingTime = lockState.unlockAt - Date.now();
+        const days = Math.ceil(remainingTime / (1000 * 60 * 60 * 24));
+        lockBtn.textContent = `🔒 Terkunci (${days} hari lagi)`;
+        lockBtn.classList.add('locked');
+        if (reshuffleBtn) {
+            reshuffleBtn.disabled = true;
+            reshuffleBtn.title = "Konfigurasi sedang dikunci.";
+        }
+    } else {
+        lockBtn.textContent = `🔓 Kunci`;
+        lockBtn.classList.remove('locked');
+        if (reshuffleBtn) {
+            reshuffleBtn.disabled = false;
+            reshuffleBtn.title = "";
+        }
+    }
+}
+
 
 // --- 5. Eksekusi dan Event Listeners ---
 
 async function initSeating(forceReshuffle = false) {
     let seatingPairs;
 
+    // Fetch lock status on every init
+    await getLockStatus();
+
     if (!forceReshuffle) {
         seatingPairs = await loadSeatingPairs();
     }
 
     if (!seatingPairs || forceReshuffle) {
+        if (lockState.locked) {
+            alert("Konfigurasi sedang dikunci. Tidak bisa mengacak ulang.");
+            return;
+        }
         console.log("Generating new seating arrangement...");
         rawData = await loadNames();
         if (rawData.length === 0) {
@@ -187,5 +275,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 initSeating(true);
             }
         });
+    }
+
+    // 3. Tambahkan event listener untuk tombol Download
+    const downloadBtn = document.getElementById('download-btn');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', downloadAsImage);
+    }
+
+    // 4. Tambahkan event listener untuk tombol Lock
+    const lockBtn = document.getElementById('lock-btn');
+    if (lockBtn) {
+        lockBtn.addEventListener('click', toggleLock);
     }
 });

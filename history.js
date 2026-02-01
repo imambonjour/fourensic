@@ -163,7 +163,7 @@ async function restoreConfig(filename) {
             throw new Error(errorData.details || 'Gagal mengembalikan konfigurasi');
         }
 
-        alert('Konfigurasi berhasil dikembalikan! Mengalihkan ke halaman kursi...');
+        alert('Konfigurasi berhasil dikembalikan! Mengalihkan ke halaman utama...');
         window.location.href = 'shuffler.html';
     } catch (error) {
         console.error("Error restoring config:", error);
