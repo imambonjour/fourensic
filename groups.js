@@ -78,6 +78,27 @@ function renderGroups(groups) {
         groupCard.appendChild(memberList);
         container.appendChild(groupCard);
     });
+
+    // Show download button once groups are rendered
+    const downloadBtn = document.getElementById('download-groups-btn');
+    if (downloadBtn) downloadBtn.style.display = 'inline-flex';
+}
+
+function downloadAsImage() {
+    const container = document.getElementById('groups-container');
+    if (!container) return;
+
+    html2canvas(container, {
+        backgroundColor: window.getComputedStyle(document.body).backgroundColor,
+        scale: 2,
+        logging: false,
+        useCORS: true
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `kelompok-xi4-${new Date().toISOString().slice(0, 10)}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
 }
 
 // --- 4. Event Listeners ---
@@ -103,5 +124,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const groups = createGroups(students, count);
             renderGroups(groups);
         });
+    }
+
+    const downloadBtn = document.getElementById('download-groups-btn');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', downloadAsImage);
     }
 });

@@ -112,7 +112,7 @@ function downloadAsImage() {
 
     // Use html2canvas to capture the seating chart
     html2canvas(seatingChart, {
-        backgroundColor: null, // Transparent background if needed
+        backgroundColor: window.getComputedStyle(document.body).backgroundColor,
         scale: 2, // Higher quality
         logging: false,
         useCORS: true
