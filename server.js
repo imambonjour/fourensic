@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname), { extensions: ['html'] }));
 
 const CACHE_DIR = path.join(__dirname, 'cache');
 const LOG_FILE = path.join(__dirname, 'logs', 'reshuffle.log');

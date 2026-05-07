@@ -509,84 +509,100 @@ body {
 }
 
 /* ─────────────────────────────────────────────
-   CONSTRAINTS PANEL
+   SECRET CONSTRAINT MODAL
 ───────────────────────────────────────────── */
 
-.constraints-panel {
+.secret-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity var(--transition);
+}
+
+.secret-modal-backdrop.open {
+    display: flex;
+    opacity: 1;
+}
+
+.secret-modal {
     background: var(--card-bg);
-    border: 1px solid var(--card-border);
+    width: 100%;
+    max-width: 600px;
     border-radius: var(--radius-large);
-    margin-bottom: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--card-border);
     overflow: hidden;
-    box-shadow: var(--shadow);
-    transition: border-color var(--transition);
+    transform: scale(0.95);
+    transition: transform var(--transition);
 }
 
-.constraints-panel:focus-within {
-    border-color: var(--accent-color);
+.secret-modal-backdrop.open .secret-modal {
+    transform: scale(1);
 }
 
-.constraints-header {
+.secret-modal-header {
+    padding: 16px 20px;
+    background: var(--bg-color);
+    border-bottom: 1px solid var(--card-border);
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 14px 20px;
-    cursor: pointer;
-    user-select: none;
-    background: var(--bg-color);
-    border-bottom: 1px solid transparent;
-    transition: background var(--transition), border-color var(--transition);
+    gap: 12px;
 }
 
-.constraints-header:hover {
-    background: color-mix(in srgb, var(--accent-color) 8%, var(--bg-color));
-}
-
-.constraints-title {
-    font-weight: 600;
-    font-size: 0.95rem;
+.secret-modal-title {
+    font-weight: 700;
+    font-size: 1.1rem;
     color: var(--text-primary);
     flex: 1;
 }
 
-.constraints-badge {
-    font-size: 0.75rem;
+.secret-modal-badge {
+    font-size: 0.7rem;
     font-weight: 700;
-    padding: 2px 10px;
-    border-radius: 20px;
+    padding: 2px 8px;
+    border-radius: 12px;
     background: var(--card-border);
     color: var(--text-secondary);
-    transition: background var(--transition), color var(--transition);
 }
 
-.constraints-badge.has-rules {
+.secret-modal-badge.has-rules {
     background: var(--accent-color);
     color: var(--accent-text);
 }
 
-.constraints-chevron {
-    font-size: 0.75rem;
+.secret-modal-close {
+    background: transparent;
+    border: none;
     color: var(--text-secondary);
-    transition: transform var(--transition);
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+    border-radius: 50%;
+    transition: all var(--transition);
 }
 
-/* Body is hidden by default, shown when .open */
-.constraints-body {
-    display: none;
-    padding: 16px 20px 20px;
-    flex-direction: column;
-    gap: 12px;
-    border-top: 1px solid var(--card-border);
+.secret-modal-close:hover {
+    background: rgba(0,0,0,0.05);
+    color: var(--text-primary);
 }
 
-.constraints-body.open {
+.secret-modal-body {
+    padding: 20px;
     display: flex;
-}
-
-.constraints-hint {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    line-height: 1.5;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .constraint-input {
@@ -594,105 +610,72 @@ body {
     background: var(--bg-color);
     border: 1px solid var(--card-border);
     border-radius: var(--radius-medium);
-    padding: 12px 14px;
+    padding: 14px;
     color: var(--text-primary);
-    font-family: inherit;
-    font-size: 0.9rem;
+    font-family: 'Outfit', monospace;
+    font-size: 0.95rem;
     line-height: 1.6;
-    resize: vertical;
+    resize: none;
     outline: none;
-    transition: border-color var(--transition), box-shadow var(--transition);
+    transition: all var(--transition);
 }
 
 .constraint-input:focus {
     border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(53, 132, 228, 0.15);
+    background: var(--card-bg);
+    box-shadow: 0 0 0 4px rgba(53, 132, 228, 0.1);
 }
 
-.constraint-input::placeholder {
-    color: var(--text-secondary);
-    opacity: 0.6;
+.secret-modal-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
 }
 
-/* Live rule tags */
 .constraint-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    min-height: 0;
+    gap: 8px;
 }
 
 .constraint-tag {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    font-size: 0.78rem;
-    font-weight: 500;
-    padding: 3px 10px;
+    gap: 5px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 12px;
     border-radius: 20px;
     border: 1px solid transparent;
 }
 
-.tag-together {
-    background: rgba(38, 162, 105, 0.12);
-    color: var(--success-bg);
-    border-color: rgba(38, 162, 105, 0.25);
-}
+.tag-together { background: rgba(38, 162, 105, 0.12); color: var(--success-bg); border-color: rgba(38, 162, 105, 0.2); }
+.tag-apart { background: rgba(224, 27, 36, 0.08); color: var(--destructive-bg); border-color: rgba(224, 27, 36, 0.15); }
+.tag-fixPos, .tag-fixRow, .tag-fixCol { background: rgba(53, 132, 228, 0.1); color: var(--accent-color); border-color: rgba(53, 132, 228, 0.15); }
+.tag-warning { background: rgba(230, 140, 0, 0.1); color: #b36800; border-color: rgba(230, 140, 0, 0.2); }
 
-.tag-apart {
-    background: rgba(224, 27, 36, 0.08);
-    color: var(--destructive-bg);
-    border-color: rgba(224, 27, 36, 0.2);
-}
-
-.tag-fixPos,
-.tag-fixRow,
-.tag-fixCol {
-    background: rgba(53, 132, 228, 0.1);
-    color: var(--accent-color);
-    border-color: rgba(53, 132, 228, 0.2);
-}
-
-.tag-warning {
-    background: rgba(230, 140, 0, 0.1);
-    color: #b36800;
-    border-color: rgba(230, 140, 0, 0.25);
-}
-
-@media (prefers-color-scheme: dark) {
-    .tag-warning { color: #ffa733; }
-}
-
-/* Error messages (blocking) */
 .constraint-errors {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
 }
 
 .constraint-error-item {
-    background: rgba(224, 27, 36, 0.08);
-    border: 1px solid rgba(224, 27, 36, 0.25);
-    border-left: 3px solid var(--destructive-bg);
+    background: rgba(224, 27, 36, 0.05);
+    border: 1px solid rgba(224, 27, 36, 0.1);
+    border-left: 4px solid var(--destructive-bg);
     border-radius: var(--radius-medium);
-    padding: 8px 14px;
+    padding: 10px 16px;
     font-size: 0.85rem;
     color: var(--destructive-bg);
-    line-height: 1.5;
 }
 
-/* Help section */
 .constraints-help-toggle {
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     color: var(--accent-color);
+    font-weight: 600;
     cursor: pointer;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    width: fit-content;
-}
-
-.constraints-help-toggle:hover {
-    opacity: 0.75;
 }
 
 .constraints-help {
@@ -700,31 +683,25 @@ body {
     background: var(--bg-color);
     border: 1px solid var(--card-border);
     border-radius: var(--radius-medium);
-    padding: 14px 16px;
+    padding: 16px;
     font-size: 0.85rem;
-    line-height: 1.7;
+    line-height: 1.6;
 }
 
-.constraints-help.open {
-    display: block;
+.constraints-help.open { display: block; }
+.constraints-help ul { margin-left: 20px; margin-top: 8px; }
+.constraints-help code { background: rgba(0,0,0,0.05); padding: 2px 5px; border-radius: 4px; font-weight: 600; }
+
+/* Trigger card feedback */
+.table-card[data-secret="imam"] {
+    cursor: pointer;
+    transition: transform 0.1s active;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
-.constraints-help ul {
-    margin: 6px 0 10px 18px;
-}
-
-.constraints-help code {
-    background: var(--card-border);
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-size: 0.82rem;
-    font-family: monospace;
-}
-
-.help-note {
-    color: var(--text-secondary);
-    font-size: 0.82rem;
-    margin-top: 6px;
+.table-card[data-secret="imam"]:active {
+    transform: scale(0.98);
 }
 
 /* Empty seat styling */

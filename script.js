@@ -343,8 +343,26 @@ function createSeatingPairsWithConstraints(people, constraints) {
 }
 
 // ─────────────────────────────────────────────
-// 4. RENDER
+// 4. RENDER  (with Imam 5-tap secret)
 // ─────────────────────────────────────────────
+
+let imamTapCount = 0;
+let imamTapTimer = null;
+
+function openSecretModal() {
+    const backdrop = document.getElementById('secret-modal-backdrop');
+    if (backdrop) {
+        backdrop.classList.add('open');
+        // Focus textarea
+        const ta = document.getElementById('constraints-input');
+        if (ta) setTimeout(() => ta.focus(), 50);
+    }
+}
+
+function closeSecretModal() {
+    const backdrop = document.getElementById('secret-modal-backdrop');
+    if (backdrop) backdrop.classList.remove('open');
+}
 
 function renderSeatingChart(pairs) {
     const chartElement = document.getElementById('seating-chart');
@@ -370,6 +388,10 @@ function renderSeatingChart(pairs) {
         const tableCard = document.createElement('div');
         tableCard.classList.add('table-card');
 
+        // Check if this card contains IMAM (partial match for names like "Imam Ahmad")
+        const hasImam = [name1, name2].some(n => n.toUpperCase().includes('IMAM'));
+        if (hasImam) tableCard.dataset.secret = 'imam';
+
         const createSeat = (name, g) => {
             const seatDiv = document.createElement('div');
             const effectiveGender = (g === 'L' || g === 'P') ? g : 'L';
@@ -390,13 +412,41 @@ function renderSeatingChart(pairs) {
 
         tableCard.appendChild(createSeat(name1, gender));
         tableCard.appendChild(createSeat(name2, gender));
+
+        // Attach 5-tap secret to Imam's card
+        if (hasImam) {
+            tableCard.addEventListener('click', () => {
+                // Clear any accidental text selection
+                window.getSelection()?.removeAllRanges();
+
+                imamTapCount++;
+                clearTimeout(imamTapTimer);
+                if (imamTapCount >= 5) {
+                    imamTapCount = 0;
+                    openSecretModal();
+                } else {
+                    imamTapTimer = setTimeout(() => { imamTapCount = 0; }, 1500);
+                }
+            });
+        }
+
         chartElement.appendChild(tableCard);
     });
 }
 
 // ─────────────────────────────────────────────
-// 5. CONSTRAINT UI HELPERS
+// 5. CONSTRAINT UI + localStorage
 // ─────────────────────────────────────────────
+
+const LS_KEY = 'xi4seat_constraints';
+
+function saveConstraintsToStorage(text) {
+    try { localStorage.setItem(LS_KEY, text); } catch (_) {}
+}
+
+function loadConstraintsFromStorage() {
+    try { return localStorage.getItem(LS_KEY) || ''; } catch (_) { return ''; }
+}
 
 function getConstraintText() {
     const el = document.getElementById('constraints-input');
@@ -582,7 +632,7 @@ async function initSeating(forceReshuffle = false) {
         const { constraints, errors } = parseConstraints(constraintText, rawData);
 
         if (errors.length > 0) {
-            // Blocking errors — do not shuffle
+            // Show errors in modal and open it
             const errorsEl = document.getElementById('constraint-errors');
             if (errorsEl) {
                 errorsEl.innerHTML = '';
@@ -593,10 +643,8 @@ async function initSeating(forceReshuffle = false) {
                     errorsEl.appendChild(div);
                 }
             }
-            // Open the panel so errors are visible
-            const body = document.getElementById('constraints-body');
-            if (body) body.classList.add('open');
-            alert(`⚠ Tidak bisa mengacak: ada ${errors.length} aturan yang tidak valid. Periksa panel pengaturan.`);
+            openSecretModal();
+            alert(`⚠ Tidak bisa mengacak: ada ${errors.length} aturan yang tidak valid. Periksa panel aturan.`);
             return;
         }
 
@@ -629,7 +677,15 @@ async function initSeating(forceReshuffle = false) {
 // ─────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Load saved constraints from localStorage into textarea
+    const textarea = document.getElementById('constraints-input');
+    if (textarea) {
+        textarea.value = loadConstraintsFromStorage();
+    }
+
     rawData = await loadNames();
+    // Run live preview with saved constraints
+    if (rawData.length > 0) updateConstraintPreview(rawData);
     initSeating();
 
     // Reshuffle button
@@ -650,18 +706,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     const lockBtn = document.getElementById('lock-btn');
     if (lockBtn) lockBtn.addEventListener('click', toggleLock);
 
-    // Constraints panel toggle
-    const toggle = document.getElementById('constraints-toggle');
-    const body = document.getElementById('constraints-body');
-    const chevron = document.getElementById('constraints-chevron');
-    if (toggle && body) {
-        toggle.addEventListener('click', () => {
-            body.classList.toggle('open');
-            if (chevron) chevron.textContent = body.classList.contains('open') ? '▲' : '▼';
+    // Secret modal — close button
+    const closeBtn = document.getElementById('secret-modal-close');
+    if (closeBtn) closeBtn.addEventListener('click', closeSecretModal);
+
+    // Secret modal — close on backdrop click
+    const backdrop = document.getElementById('secret-modal-backdrop');
+    if (backdrop) {
+        backdrop.addEventListener('click', (e) => {
+            if (e.target === backdrop) closeSecretModal();
         });
     }
 
-    // Help toggle
+    // Secret modal — Save & Close button
+    const saveBtn = document.getElementById('save-constraints-btn');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+            const text = getConstraintText();
+            const { errors } = updateConstraintPreview(rawData);
+            if (errors.length > 0) {
+                // Keep modal open, show errors
+                return;
+            }
+            saveConstraintsToStorage(text);
+            closeSecretModal();
+        });
+    }
+
+    // Help toggle inside modal
     const helpToggle = document.getElementById('help-toggle');
     const helpPanel = document.getElementById('constraints-help');
     if (helpToggle && helpPanel) {
@@ -669,8 +741,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Live parse preview on textarea input
-    const textarea = document.getElementById('constraints-input');
     if (textarea) {
         textarea.addEventListener('input', () => updateConstraintPreview(rawData));
     }
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeSecretModal();
+    });
 });
