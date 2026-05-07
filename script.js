@@ -127,21 +127,21 @@ function parseConstraints(text, people) {
 
         // Validate names exist
         if (c.p1 === null) {
-            errors.push(`❌ Nama tidak ditemukan: "<strong>${c.name1}</strong>" dalam aturan: "${c.raw}"`);
+            errors.push(`❌ Nama tidak ditemukan: "${c.name1}" dalam aturan: "${c.raw}"`);
             continue;
         }
         if (c.p2 === null && ['together', 'apart'].includes(c.type)) {
-            errors.push(`❌ Nama tidak ditemukan: "<strong>${c.name2}</strong>" dalam aturan: "${c.raw}"`);
+            errors.push(`❌ Nama tidak ditemukan: "${c.name2}" dalam aturan: "${c.raw}"`);
             continue;
         }
         if (c.p === null && ['fixPos', 'fixRow', 'fixCol'].includes(c.type)) {
-            errors.push(`❌ Nama tidak ditemukan: "<strong>${c.name}</strong>" dalam aturan: "${c.raw}"`);
+            errors.push(`❌ Nama tidak ditemukan: "${c.name}" dalam aturan: "${c.raw}"`);
             continue;
         }
 
         // BLOCKING: together across genders
         if (c.type === 'together' && c.p1.gender !== c.p2.gender) {
-            errors.push(`❌ Tidak bisa: "<strong>${c.p1.nama}</strong>" (${c.p1.gender === 'L' ? 'Laki-laki' : 'Perempuan'}) dan "<strong>${c.p2.nama}</strong>" (${c.p2.gender === 'L' ? 'Laki-laki' : 'Perempuan'}) berbeda jenis kelamin — tidak bisa sebangku.`);
+            errors.push(`❌ Tidak bisa: "${c.p1.nama}" (${c.p1.gender === 'L' ? 'Laki-laki' : 'Perempuan'}) dan "${c.p2.nama}" (${c.p2.gender === 'L' ? 'Laki-laki' : 'Perempuan'}) berbeda jenis kelamin — tidak bisa sebangku.`);
             continue;
         }
 
@@ -490,7 +490,7 @@ function updateConstraintPreview(people) {
         for (const e of errors) {
             const div = document.createElement('div');
             div.classList.add('constraint-error-item');
-            div.innerHTML = e;
+            div.textContent = e; // SECURITY: Use textContent to prevent XSS
             errorsEl.appendChild(div);
         }
     }
@@ -639,7 +639,7 @@ async function initSeating(forceReshuffle = false) {
                 for (const e of errors) {
                     const div = document.createElement('div');
                     div.classList.add('constraint-error-item');
-                    div.innerHTML = e;
+                    div.textContent = e; // SECURITY: Use textContent
                     errorsEl.appendChild(div);
                 }
             }

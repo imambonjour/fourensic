@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const fs = require('fs-extra');
 const path = require('path');
@@ -17,7 +18,7 @@ const LOG_FILE = path.join(__dirname, 'logs', 'reshuffle.log');
 const CURRENT_CONFIG_FILE = path.join(__dirname, 'current.json');
 const CURRENT_NAMES_FILE = path.join(__dirname, 'name.csv');
 const LOCK_FILE = path.join(__dirname, 'lock.json');
-const ADMIN_PASSWORD = 'xi4seat'; // Default password
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'xi4seat'; // Fallback to default if not set
 
 
 // Ensure directories exist
@@ -216,7 +217,9 @@ app.get('/api/history', async (req, res) => {
 app.post('/api/history/restore/:filename', async (req, res) => {
     try {
         const { filename } = req.params;
-        const sourcePath = path.join(CACHE_DIR, filename);
+        // SECURITY: Sanitize filename to prevent Path Traversal
+        const safeFilename = path.basename(filename);
+        const sourcePath = path.join(CACHE_DIR, safeFilename);
 
         if (!(await fs.pathExists(sourcePath))) {
             return res.status(404).json({ error: 'Source config not found in cache' });
@@ -271,7 +274,10 @@ app.post('/api/history/restore/:filename', async (req, res) => {
 app.get('/api/history/:filename', async (req, res) => {
     try {
         const { filename } = req.params;
-        const filePath = path.join(CACHE_DIR, filename);
+        // SECURITY: Sanitize filename to prevent Path Traversal
+        const safeFilename = path.basename(filename);
+        const filePath = path.join(CACHE_DIR, safeFilename);
+        
         if (await fs.pathExists(filePath)) {
             const content = await fs.readJson(filePath);
             res.json(content);
