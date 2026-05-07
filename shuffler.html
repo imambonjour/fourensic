@@ -32,6 +32,48 @@
             </div>
         </header>
 
+        <!-- ===== CONSTRAINTS PANEL ===== -->
+        <section class="constraints-panel" id="constraints-panel">
+            <div class="constraints-header" id="constraints-toggle">
+                <span class="constraints-title">⚙️ Pengaturan Aturan Duduk</span>
+                <span class="constraints-badge" id="constraints-badge">0 aturan</span>
+                <span class="constraints-chevron" id="constraints-chevron">▼</span>
+            </div>
+            <div class="constraints-body" id="constraints-body">
+                <p class="constraints-hint">Tulis aturan tempat duduk dalam bahasa alami, satu aturan per baris.<br>
+                    Contoh: <em>Ari dan Habibi harus sebangku</em> &nbsp;|&nbsp; <em>Nabil harus di baris 1 kolom 2</em></p>
+
+                <textarea
+                    id="constraints-input"
+                    class="constraint-input"
+                    placeholder="# Satu aturan per baris. Contoh:
+together Ari Habibi
+apart Nabil Tegar
+row Adilah 1
+col Imam 3
+pos Humaira 1 2"
+                    rows="6"
+                ></textarea>
+
+                <div class="constraint-tags" id="constraint-tags"></div>
+                <div class="constraint-errors" id="constraint-errors"></div>
+
+                <div class="constraints-help-toggle" id="help-toggle">📖 Lihat daftar perintah yang didukung</div>
+                <div class="constraints-help" id="constraints-help">
+                    <p><strong>Format: <code>perintah nama [angka]</code></strong></p>
+                    <ul>
+                        <li><code>together Ari Habibi</code> — Paksa satu meja (error jika beda gender)</li>
+                        <li><code>apart Nabil Tegar</code> — Pastikan tidak sebangku</li>
+                        <li><code>row Adilah 2</code> — Tempatkan di baris 2</li>
+                        <li><code>col Imam 3</code> — Tempatkan di kolom 3</li>
+                        <li><code>pos Humaira 1 2</code> — Tempatkan di baris 1, kolom 2</li>
+                        <li><code># komentar</code> — Baris ini diabaikan</li>
+                    </ul>
+                    <p class="help-note">Nama tidak peka huruf besar/kecil. Nama multi-kata didukung: <em>Naufal Ibrahim</em></p>
+                </div>
+            </div>
+        </section>
+
         <section class="seating-section">
             <div class="seating-grid" id="seating-chart">
                 <!-- Seating pairs will be rendered here -->
