@@ -591,16 +591,27 @@ async function toggleLock() {
 
 function updateLockUI() {
     const lockBtn = document.getElementById('lock-btn');
+    const lockIcon = document.getElementById('lock-icon');
+    const lockText = document.getElementById('lock-text');
     const reshuffleBtn = document.getElementById('reshuffle-btn');
     if (!lockBtn) return;
+
     if (lockState.locked) {
         const remainingTime = lockState.unlockAt - Date.now();
         const days = Math.ceil(remainingTime / (1000 * 60 * 60 * 24));
-        lockBtn.textContent = `🔒 Terkunci (${days} hari lagi)`;
+        if (lockText) lockText.textContent = `Terkunci (${days} hari lagi)`;
+        if (lockIcon) {
+            lockIcon.classList.remove('icon-lock');
+            lockIcon.classList.add('icon-wait');
+        }
         lockBtn.classList.add('locked');
         if (reshuffleBtn) { reshuffleBtn.disabled = true; reshuffleBtn.title = "Konfigurasi sedang dikunci."; }
     } else {
-        lockBtn.textContent = `🔓 Kunci`;
+        if (lockText) lockText.textContent = `Kunci`;
+        if (lockIcon) {
+            lockIcon.classList.remove('icon-wait');
+            lockIcon.classList.add('icon-lock');
+        }
         lockBtn.classList.remove('locked');
         if (reshuffleBtn) { reshuffleBtn.disabled = false; reshuffleBtn.title = ""; }
     }

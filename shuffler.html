@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 
@@ -20,14 +21,17 @@
     </div>
 
     <main class="app-container">
-        <a href="index.html" class="btn-home" title="Kembali ke Beranda">🏠</a>
+        <a href="index.html" class="btn-home" title="Kembali ke Beranda"></a>
         <header class="app-header">
             <h1 class="app-title">Peta Tempat Duduk</h1>
             <p class="app-subtitle">Siswa Kelas XI-4</p>
             <div class="header-actions">
                 <button id="reshuffle-btn" class="btn-primary">Reshuffle Kursi</button>
                 <button id="download-btn" class="btn-secondary">Unduh Gambar</button>
-                <button id="lock-btn" class="btn-secondary">🔒 Kunci</button>
+                <button id="lock-btn" class="btn-secondary">
+                    <span id="lock-icon" class="btn-icon icon-lock"></span>
+                    <span id="lock-text">Kunci</span>
+                </button>
                 <a href="history.html" class="btn-secondary">Lihat Riwayat</a>
             </div>
         </header>
@@ -42,17 +46,12 @@
                 </div>
 
                 <div class="secret-modal-body">
-                    <textarea
-                        id="constraints-input"
-                        class="constraint-input"
-                        placeholder="# Satu aturan per baris. Contoh:
+                    <textarea id="constraints-input" class="constraint-input" placeholder="# Satu aturan per baris. Contoh:
 together Ari Habibi
 apart Nabil Tegar
 row Adilah 1
 col Imam 3
-pos Humaira 1 2"
-                        rows="7"
-                    ></textarea>
+pos Humaira 1 2" rows="7"></textarea>
 
                     <div class="constraint-tags" id="constraint-tags"></div>
                     <div class="constraint-errors" id="constraint-errors"></div>
@@ -65,14 +64,16 @@ pos Humaira 1 2"
                     <div class="constraints-help" id="constraints-help">
                         <p><strong>Format: <code>perintah nama [angka]</code></strong></p>
                         <ul>
-                            <li><code>together Ari Habibi</code> — Paksa satu meja <em>(error jika beda gender)</em></li>
+                            <li><code>together Ari Habibi</code> — Paksa satu meja <em>(error jika beda gender)</em>
+                            </li>
                             <li><code>apart Nabil Tegar</code> — Pastikan tidak sebangku</li>
                             <li><code>row Adilah 2</code> — Tempatkan di baris 2</li>
                             <li><code>col Imam 3</code> — Tempatkan di kolom 3</li>
                             <li><code>pos Humaira 1 2</code> — Tempatkan di baris 1, kolom 2</li>
                             <li><code># komentar</code> — Baris ini diabaikan</li>
                         </ul>
-                        <p class="help-note">Nama tidak peka huruf besar/kecil. Nama multi-kata didukung: <em>Naufal Ibrahim</em></p>
+                        <p class="help-note">Nama tidak peka huruf besar/kecil. Nama multi-kata didukung: <em>Naufal
+                                Ibrahim</em></p>
                     </div>
                 </div>
             </div>
