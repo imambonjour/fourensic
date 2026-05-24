@@ -68,7 +68,10 @@ function renderGroups(groups) {
             const li = document.createElement('li');
             li.classList.add('member-item', person.gender);
             li.innerHTML = `
-                <span class="member-name">${person.nama}</span>
+                <span class="member-name">
+                    <span class="name-full">${person.nama}</span>
+                    <span class="name-short">${person.shortName || person.nama}</span>
+                </span>
                 <span class="gender-pill">${person.gender}</span>
             `;
             memberList.appendChild(li);

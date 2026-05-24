@@ -18,14 +18,54 @@ const LOG_FILE = path.join(__dirname, 'logs', 'reshuffle.log');
 const CURRENT_CONFIG_FILE = path.join(__dirname, 'current.json');
 const CURRENT_NAMES_FILE = path.join(__dirname, 'name.csv');
 const LOCK_FILE = path.join(__dirname, 'lock.json');
+const SHORT_NAMES_FILE = path.join(__dirname, 'name_short.csv');
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'xi4seat'; // Fallback to default if not set
 
+// Face image mapping: shortName (lowercase) -> filename in assets/faces/
+const FACE_MAP = {
+    'adilah': 'adilah.jpg',
+    'ari': 'ari.jpg',
+    'fathiya': 'fathiya.jpg',
+    'habibi': 'habibi.jpg',
+    'halimatun': 'halimatun.jpg',
+    'humaira': 'humaira.jpg',
+    'imam': 'imam.jpg',
+    'inaya': 'inaya.jpg',
+    'inayah': 'inayah.jpg',
+    'kaffah': 'kaffah.jpg',
+    'kaila': 'kaila.jpg',
+    'kania': 'kania.jpg',
+    'mahia': 'narasakhi.jpg',
+    'mieza': 'mieza.jpg',
+    'fadli': 'fadli.jpg',
+    'rajib': 'rajib.jpg',
+    'alyafi': 'alyafi.JPG',
+    'dzikrie': 'dzikrie.jpg',
+    'hamzah': 'hamzah.jpg',
+    'tegar': 'tegar.jpg',
+    'nabil': 'nabil.jpeg',
+    'nadira': 'nadira.jpg',
+    'nahdah': 'nahdah.jpg',
+    'nailah': 'nailah.jpg',
+    'nareswari': 'nares.jpg',
+    'boim': 'boim.jpg',
+    'mz': 'mz.jpg',
+    'rafifaydin': 'rafif.jpg',
+    'naura': 'naura.jpg',
+    'noval': 'tanjung.jpg',
+    'nurul': 'nurul.jpg',
+    'regitha': 'regita.jpg',
+    'shaffira': 'saffira.jpg',
+    'syafiq': 'syafiq.jpg',
+    'zahirah': 'zahirah.jpg',
+    'firjatullah': 'firja.jpg',
+};
 
 // Ensure directories exist
 fs.ensureDirSync(CACHE_DIR);
 fs.ensureDirSync(path.dirname(LOG_FILE));
 
-// Get names from CSV
+// Get names from CSV (merges full names, short names, and face images)
 app.get('/api/names', async (req, res) => {
     try {
         if (!(await fs.pathExists(CURRENT_NAMES_FILE))) {
@@ -35,8 +75,32 @@ app.get('/api/names', async (req, res) => {
         const lines = csvContent.trim().split('\n');
         const names = lines.map(line => {
             const [nama, gender] = line.split(',').map(s => s.trim());
-            return { nama, gender };
+            return { nama, gender, shortName: nama, face: null }; // default shortName to full name
         });
+
+        // Merge short names if the file exists
+        if (await fs.pathExists(SHORT_NAMES_FILE)) {
+            const shortCsv = await fs.readFile(SHORT_NAMES_FILE, 'utf-8');
+            const shortLines = shortCsv.trim().split('\n');
+            const shortMap = {};
+            shortLines.forEach((line, i) => {
+                const [shortName] = line.split(',').map(s => s.trim());
+                // Match by index (same order as name.csv)
+                if (names[i]) shortMap[names[i].nama] = shortName;
+            });
+            names.forEach(n => {
+                if (shortMap[n.nama]) n.shortName = shortMap[n.nama];
+            });
+        }
+
+        // Merge face images using shortName lookup
+        names.forEach(n => {
+            const key = (n.shortName || '').toLowerCase();
+            if (FACE_MAP[key]) {
+                n.face = `assets/faces/${FACE_MAP[key]}`;
+            }
+        });
+
         res.json(names);
     } catch (error) {
         console.error(error);

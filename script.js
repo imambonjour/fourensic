@@ -182,7 +182,7 @@ function createSeatingPairsWithConstraints(people, constraints) {
             warnings.push(`⚠ "${c.p1.nama}" atau "${c.p2.nama}" sudah dialokasikan ke aturan lain — aturan sebangku diabaikan.`);
             continue;
         }
-        fixedPairs.push([c.p1.nama, c.p2.nama, c.p1.gender]);
+        fixedPairs.push([c.p1.nama, c.p2.nama, c.p1.gender, c.p1.shortName || c.p1.nama, c.p2.shortName || c.p2.nama]);
         seated.add(c.p1.nama);
         seated.add(c.p2.nama);
     }
@@ -222,12 +222,12 @@ function createSeatingPairsWithConstraints(people, constraints) {
                 if (!isApart) { partnerIdx = j; break; }
             }
             if (partnerIdx !== -1) {
-                pairs.push([p1.nama, group[partnerIdx].nama, gender]);
+                pairs.push([p1.nama, group[partnerIdx].nama, gender, p1.shortName || p1.nama, group[partnerIdx].shortName || group[partnerIdx].nama]);
                 used.add(i);
                 used.add(partnerIdx);
             } else {
                 // No valid partner found — seat alone
-                pairs.push([p1.nama, '—', gender]);
+                pairs.push([p1.nama, '—', gender, p1.shortName || p1.nama, '—']);
                 warnings.push(`⚠ "${p1.nama}" tidak memiliki pasangan yang memenuhi semua aturan — duduk sendiri.`);
                 used.add(i);
             }
@@ -235,7 +235,7 @@ function createSeatingPairsWithConstraints(people, constraints) {
         // Odd one left
         for (let i = 0; i < group.length; i++) {
             if (!used.has(i)) {
-                pairs.push([group[i].nama, '—', gender]);
+                pairs.push([group[i].nama, '—', gender, group[i].shortName || group[i].nama, '—']);
             }
         }
         return pairs;
@@ -369,12 +369,23 @@ function renderSeatingChart(pairs) {
     if (!chartElement) return;
     chartElement.innerHTML = '';
 
+    // Build lookup maps from rawData
+    const shortNameMap = {};
+    const faceMap = {};
+    (rawData || []).forEach(p => {
+        shortNameMap[p.nama] = p.shortName || p.nama;
+        if (p.face) faceMap[p.nama] = p.face;
+    });
+
     const totalPairs = pairs.length;
     const lastRowStartIndex = Math.floor((totalPairs - 1) / 4) * 4;
     const lastRowPairsCount = totalPairs - lastRowStartIndex;
 
     pairs.forEach((pair, index) => {
-        const [name1, name2, gender] = pair;
+        const [name1, name2, gender, short1, short2] = pair;
+        // Fall back to shortNameMap for pairs loaded from server (old format)
+        const displayShort1 = short1 || shortNameMap[name1] || name1;
+        const displayShort2 = short2 || shortNameMap[name2] || name2;
 
         if (index === lastRowStartIndex + 1 && lastRowPairsCount === 2) {
             const spacer1 = document.createElement('div');
@@ -392,26 +403,57 @@ function renderSeatingChart(pairs) {
         const hasImam = [name1, name2].some(n => n.toUpperCase().includes('IMAM'));
         if (hasImam) tableCard.dataset.secret = 'imam';
 
-        const createSeat = (name, g) => {
+        const createSeat = (name, g, shortName) => {
             const seatDiv = document.createElement('div');
             const effectiveGender = (g === 'L' || g === 'P') ? g : 'L';
             seatDiv.classList.add('seat-item', effectiveGender);
             if (name === '—') seatDiv.classList.add('empty-seat');
 
+            // Avatar
+            const avatarWrap = document.createElement('div');
+            avatarWrap.classList.add('seat-avatar-wrap');
+
+            if (name !== '—' && faceMap[name]) {
+                const avatarDiv = document.createElement('div');
+                avatarDiv.classList.add('seat-avatar');
+                // Use absolute URL to guarantee compatibility with html2canvas cloning
+                const absoluteSrc = window.location.origin + '/' + faceMap[name];
+                avatarDiv.style.backgroundImage = `url('${absoluteSrc}')`;
+                avatarDiv.style.backgroundSize = 'cover';
+                avatarDiv.style.backgroundPosition = 'center';
+                avatarDiv.style.backgroundRepeat = 'no-repeat';
+                avatarDiv.title = shortName || name;
+                avatarWrap.appendChild(avatarDiv);
+            } else {
+                // Fallback silhouette using an inline SVG to avoid FontAwesome CDN loading errors in html2canvas
+                const placeholder = document.createElement('div');
+                placeholder.classList.add('seat-avatar', 'seat-avatar-placeholder');
+                placeholder.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px; opacity: 0.5; display: block;"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`;
+                avatarWrap.appendChild(placeholder);
+            }
+
+            seatDiv.appendChild(avatarWrap);
+
             const label = document.createElement('span');
             label.classList.add('seat-label');
             label.textContent = g === 'L' ? 'Laki-laki' : (g === 'P' ? 'Perempuan' : '?');
 
-            const nameSpan = document.createElement('span');
-            nameSpan.textContent = name;
+            const nameFullSpan = document.createElement('span');
+            nameFullSpan.classList.add('name-full');
+            nameFullSpan.textContent = name;
 
+            const nameShortSpan = document.createElement('span');
+            nameShortSpan.classList.add('name-short');
+            nameShortSpan.textContent = (name === '—') ? '—' : (shortName || name);
+
+            seatDiv.appendChild(nameShortSpan);
+            seatDiv.appendChild(nameFullSpan);
             seatDiv.appendChild(label);
-            seatDiv.appendChild(nameSpan);
             return seatDiv;
         };
 
-        tableCard.appendChild(createSeat(name1, gender));
-        tableCard.appendChild(createSeat(name2, gender));
+        tableCard.appendChild(createSeat(name1, gender, displayShort1));
+        tableCard.appendChild(createSeat(name2, gender, displayShort2));
 
         // Attach 5-tap secret to Imam's card
         if (hasImam) {
@@ -676,6 +718,10 @@ async function initSeating(forceReshuffle = false) {
         await saveSeatingPairs(seatingPairs);
     } else {
         console.log("Loading seating arrangement from server.");
+        // Always load rawData so shortName lookup works in renderSeatingChart
+        if (rawData.length === 0) {
+            rawData = await loadNames();
+        }
     }
 
     renderSeatingChart(seatingPairs);

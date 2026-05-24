@@ -677,8 +677,8 @@ footer {
 
 /* Seating Grid */
 .seating-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
+    flex-wrap: wrap;
     gap: 20px;
     margin-top: 20px;
 }
@@ -688,11 +688,13 @@ footer {
     background-color: var(--secondary-bg);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: var(--radius-large);
-    padding: 15px;
+    padding: 18px 14px;
     display: flex;
-    gap: 15px;
+    gap: 12px;
     transition: var(--transition);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    width: calc(25% - 15px);
+    box-sizing: border-box;
 }
 
 .table-card:hover {
@@ -703,61 +705,199 @@ footer {
 /* Individual Seat */
 .seat-item {
     flex: 1;
-    padding: 12px 10px;
+    padding: 14px 8px 10px;
     border-radius: var(--radius-medium);
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     text-align: center;
     font-size: 0.85rem;
     font-weight: 600;
-    min-height: 70px;
+    min-height: 120px;
     background-color: var(--primary-bg);
     border: 1px solid rgba(255, 255, 255, 0.02);
+    gap: 4px;
+    transition: var(--transition);
 }
 
 .seat-item.L {
     color: var(--male-color);
-    border-left: 3px solid rgba(98, 160, 234, 0.5);
+    border-bottom: 3px solid rgba(98, 160, 234, 0.5);
 }
 
 .seat-item.P {
     color: var(--female-color);
-    border-left: 3px solid rgba(220, 138, 221, 0.5);
+    border-bottom: 3px solid rgba(220, 138, 221, 0.5);
+}
+
+/* Avatar wrapper */
+.seat-avatar-wrap {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    margin-bottom: 4px;
+    position: relative;
+}
+
+/* Avatar image */
+.seat-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    display: block;
+}
+
+.seat-item:hover .seat-avatar {
+    transform: scale(1.08);
+}
+
+/* Gender-colored ring around avatar */
+.seat-item.L .seat-avatar-wrap {
+    box-shadow: 0 0 0 2.5px rgba(98, 160, 234, 0.6);
+}
+
+.seat-item.P .seat-avatar-wrap {
+    box-shadow: 0 0 0 2.5px rgba(220, 138, 221, 0.6);
+}
+
+/* Placeholder avatar (fallback) */
+.seat-avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-gray);
+    font-size: 1.2rem;
 }
 
 .seat-label {
-    font-size: 0.6rem;
+    font-size: 0.55rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 2px;
-    opacity: 0.6;
+    opacity: 0.5;
+    margin-top: 2px;
+}
+
+/* ─── Name Display: Full vs Short ─── */
+/* Desktop: show short name prominently, full name below in smaller text */
+.name-short {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    line-height: 1.2;
+}
+
+.name-full {
+    display: block;
+    font-size: 0.55rem;
+    font-weight: 400;
+    opacity: 0.45;
+    line-height: 1.2;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.seat-item:hover .name-full {
+    max-height: 2.5em;
+    opacity: 0.65;
 }
 
 /* Spacer for back row separation */
 .spacer {
     pointer-events: none;
+    width: calc(25% - 15px);
+    box-sizing: border-box;
 }
 
-/* Responsive adjustment */
+/* ─── Tablet: 2-col grid ─── */
 @media (max-width: 900px) {
-    .seating-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .seating-grid .table-card {
+        width: calc(50% - 10px);
     }
 
     .spacer {
         display: none;
     }
+
+    .groups-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
-@media (max-width: 500px) {
+/* ─── Mobile: 2-col grid with short names ─── */
+@media (max-width: 600px) {
+    /* Hide full name completely on mobile */
+    .name-full { display: none !important; }
+
+    /* Keep 2-column seating grid — still recognizable */
     .seating-grid {
+        gap: 10px;
+    }
+
+    /* Tighter table cards */
+    .seating-grid .table-card {
+        width: calc(50% - 5px);
+        padding: 10px 8px;
+        gap: 8px;
+    }
+
+    /* Smaller seat items to fit 2 side-by-side comfortably */
+    .seat-item {
+        padding: 10px 4px 8px;
+        font-size: 0.75rem;
+        min-height: 95px;
+    }
+
+    /* Smaller avatars on mobile */
+    .seat-avatar-wrap {
+        width: 38px;
+        height: 38px;
+    }
+
+    .seat-avatar-placeholder {
+        font-size: 0.9rem;
+    }
+
+    .name-short {
+        font-size: 0.7rem;
+    }
+
+    .seat-label {
+        font-size: 0.5rem;
+    }
+
+    /* Groups grid: single column on very small screens */
+    .groups-grid {
         grid-template-columns: 1fr;
     }
 
-    .app-title {
+    /* Section title adjustments */
+    .section-title h2 {
         font-size: 1.8rem;
+    }
+
+    .section-title p {
+        font-size: 0.9rem;
+    }
+
+    /* Adjust header action buttons to stack */
+    .header-actions {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn {
+        width: 80%;
+        justify-content: center;
     }
 
     .large-greeting {
