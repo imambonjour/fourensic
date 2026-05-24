@@ -601,16 +601,14 @@ function updateLockUI() {
         const days = Math.ceil(remainingTime / (1000 * 60 * 60 * 24));
         if (lockText) lockText.textContent = `Terkunci (${days} hari lagi)`;
         if (lockIcon) {
-            lockIcon.classList.remove('icon-lock');
-            lockIcon.classList.add('icon-wait');
+            lockIcon.className = 'fa-solid fa-lock';
         }
         lockBtn.classList.add('locked');
         if (reshuffleBtn) { reshuffleBtn.disabled = true; reshuffleBtn.title = "Konfigurasi sedang dikunci."; }
     } else {
         if (lockText) lockText.textContent = `Kunci`;
         if (lockIcon) {
-            lockIcon.classList.remove('icon-wait');
-            lockIcon.classList.add('icon-lock');
+            lockIcon.className = 'fa-solid fa-unlock';
         }
         lockBtn.classList.remove('locked');
         if (reshuffleBtn) { reshuffleBtn.disabled = false; reshuffleBtn.title = ""; }

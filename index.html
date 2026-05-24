@@ -4,40 +4,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xi4Seat • Welcome</title>
+    <title>FOURENSIC | XI-4 Class Management</title>
+    <meta name="description" content="Sistem Manajemen Tempat Duduk Digital untuk Kelas XI-4 FOURENSIC">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body class="homepage-body">
-    <div class="background-blobs">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-    </div>
-
-    <main class="app-container">
-        <div class="hero-section">
-            <h1 class="app-title large-greeting">Welcome to XI-4 FOURENSIC</h1>
-            <p class="app-subtitle">Sistem Manajemen Tempat Duduk Digital untuk Kelas XI-4</p>
-
-            <div class="hero-content">
-                <p class="hero-description">
-                    Kelola dan acak tempat duduk kelas dengan mudah, adil, dan transparan.
-                    Klik tombol di bawah untuk mulai mengatur formasi tempat duduk.
-                </p>
-            </div>
-
-            <div class="header-actions hero-actions">
-                <a href="shuffler.html" class="btn-primary">Buka Seating Shuffler</a>
-                <a href="groups.html" class="btn-secondary">Group Maker</a>
-            </div>
-
+    <header id="main-header">
+        <a href="#" class="logo">
+            <!-- You can use an img tag here if you have a logo image, using text for now -->
+            <span class="logo-text">FOUR<span class="accent-text">ENSIC</span></span>
+        </a>
+        <div class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
         </div>
-    </main>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="#hero">Beranda</a></li>
+                <li><a href="#features">Fitur</a></li>
+                <li><a href="#about">Tentang</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="hero" class="hero">
+        <div class="hero-content">
+            <h1>WELCOME TO <span class="accent-text">FOURENSIC</span></h1>
+            <p>Sistem Manajemen Tempat Duduk Digital untuk Kelas XI-4. Kelola dan acak tempat duduk kelas dengan mudah, adil, dan transparan.</p>
+            <a href="#features" class="btn">Mulai Sekarang</a>
+        </div>
+    </section>
+
+    <section id="features" class="features-section">
+        <div class="section-title">
+            <h2>Fitur <span class="accent-text">Utama</span></h2>
+            <p>Alat manajemen kelas untuk mempermudah kegiatan belajar</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card" onclick="window.location.href='shuffler.html'">
+                <div class="feature-icon"><i class="fas fa-random"></i></div>
+                <h3>Seating Shuffler</h3>
+                <p>Acak tempat duduk siswa dengan berbagai aturan khusus. Buat formasi yang adil secara otomatis.</p>
+                <div class="feature-action"><i class="fas fa-arrow-right"></i></div>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='groups.html'">
+                <div class="feature-icon"><i class="fas fa-users"></i></div>
+                <h3>Group Maker</h3>
+                <p>Bagi siswa ke dalam kelompok belajar dengan mudah. Mendukung pengaturan distribusi gender yang seimbang.</p>
+                <div class="feature-action"><i class="fas fa-arrow-right"></i></div>
+            </div>
+            
+            <div class="feature-card" onclick="window.location.href='history.html'">
+                <div class="feature-icon"><i class="fas fa-history"></i></div>
+                <h3>Riwayat</h3>
+                <p>Lihat dan kembalikan formasi tempat duduk yang pernah dibuat sebelumnya tanpa harus mengacak ulang.</p>
+                <div class="feature-action"><i class="fas fa-arrow-right"></i></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="about-section">
+        <div class="about-container">
+            <h2>Tentang <span class="accent-text">XI-4 FOURENSIC</span></h2>
+            <p>
+                FOURENSIC adalah identitas dari kelas XI-4. Aplikasi web ini dibangun secara khusus untuk membantu 
+                wali kelas dan pengurus kelas dalam mengatur posisi tempat duduk serta pembentukan kelompok belajar.
+                Dengan algoritma pengacakan yang pintar, kami memastikan setiap siswa mendapatkan kesempatan
+                berinteraksi yang sama dengan teman sekelasnya.
+            </p>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="logo-footer">
+                <span class="logo-text large">FOUR<span class="accent-text">ENSIC</span></span>
+            </div>
+            <p class="copyright">&copy; 2026 Kelas XI-4 FOURENSIC. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Simple sticky header and mobile menu functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const header = document.getElementById('main-header');
+            const mobileBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            if (mobileBtn) {
+                mobileBtn.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                });
+            }
+
+            // Random Hero Background Image
+            const heroImages = [
+                'assets/images/Zahirah%20siregar03747.JPG',
+                'assets/images/Zahirah%20siregar03755.JPG',
+                'assets/images/Zahirah%20siregar03801.JPG',
+                'assets/images/Zahirah%20siregar03802.JPG',
+                'assets/images/cowboy_win.jpeg'
+            ];
+            const randomImg = heroImages[Math.floor(Math.random() * heroImages.length)];
+            const heroSection = document.getElementById('hero');
+            if (heroSection) {
+                heroSection.style.backgroundImage = `linear-gradient(rgba(28, 19, 17, 0.8), rgba(28, 19, 17, 0.9)), url('${randomImg}')`;
+                heroSection.style.backgroundPosition = 'center';
+                heroSection.style.backgroundSize = 'cover';
+                heroSection.style.backgroundRepeat = 'no-repeat';
+            }
+        });
+    </script>
 </body>
 
 </html>
