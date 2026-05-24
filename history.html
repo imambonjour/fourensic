@@ -13,29 +13,35 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
 </head>
 
-<body>
-    <div class="background-blobs">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-    </div>
+    <header id="main-header" class="scrolled">
+        <a href="index.html" class="logo">
+            <span class="logo-text">FOUR<span class="accent-text">ENSIC</span></span>
+        </a>
+        <div class="mobile-menu-btn" onclick="document.querySelector('.nav-menu').classList.toggle('active')">
+            <i class="fas fa-bars"></i>
+        </div>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="shuffler.html">Seating</a></li>
+                <li><a href="groups.html">Groups</a></li>
+                <li><a href="history.html" style="color: var(--accent);">Riwayat</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <main class="app-container">
-        <a href="shuffler.html" class="btn-home" title="Kembali ke Beranda"><i class="fa-solid fa-house"></i></a>
-        <header class="app-header">
-            <h1 class="app-title">Riwayat Konfigurasi</h1>
-            <p class="app-subtitle">Daftar pengaturan tempat duduk sebelumnya</p>
-            <div class="header-actions">
-                <a href="shuffler.html" class="btn-secondary">Kembali ke Beranda</a>
-            </div>
-        </header>
+    <section class="features-section" style="padding-top: 120px; min-height: 100vh;">
+        <div class="section-title">
+            <h2>Riwayat <span class="accent-text">Konfigurasi</span></h2>
+            <p>Daftar pengaturan tempat duduk sebelumnya</p>
+        </div>
 
-        <section class="history-section">
+        <div class="history-list-container" style="max-width: 800px; margin: 0 auto; padding: 0 5%;">
             <div id="history-list" class="history-list">
                 <!-- History items will be rendered here -->
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
 
     <!-- Modal for viewing layout -->
     <div id="layout-modal" class="modal">

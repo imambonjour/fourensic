@@ -14,28 +14,36 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 
-<body>
-    <div class="background-blobs">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-    </div>
+    <header id="main-header" class="scrolled">
+        <a href="index.html" class="logo">
+            <span class="logo-text">FOUR<span class="accent-text">ENSIC</span></span>
+        </a>
+        <div class="mobile-menu-btn" onclick="document.querySelector('.nav-menu').classList.toggle('active')">
+            <i class="fas fa-bars"></i>
+        </div>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="shuffler.html" style="color: var(--accent);">Seating</a></li>
+                <li><a href="groups.html">Groups</a></li>
+                <li><a href="history.html">Riwayat</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <main class="app-container">
-        <a href="index.html" class="btn-home" title="Kembali ke Beranda"><i class="fa-solid fa-house"></i></a>
-        <header class="app-header">
-            <h1 class="app-title">Peta Tempat Duduk</h1>
-            <p class="app-subtitle">Siswa Kelas XI-4</p>
-            <div class="header-actions">
-                <button id="reshuffle-btn" class="btn-primary">Reshuffle Kursi</button>
-                <button id="download-btn" class="btn-secondary">Unduh Gambar</button>
-                <button id="lock-btn" class="btn-secondary">
+    <section class="features-section" style="padding-top: 120px; min-height: 100vh;">
+        <div class="section-title">
+            <h2>Peta <span class="accent-text">Tempat Duduk</span></h2>
+            <p>Siswa Kelas XI-4</p>
+            <div class="header-actions" style="margin-top: 20px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <button id="reshuffle-btn" class="btn">Reshuffle Kursi</button>
+                <button id="download-btn" class="btn btn-outline">Unduh Gambar</button>
+                <button id="lock-btn" class="btn btn-outline">
                     <i id="lock-icon" class="fa-solid fa-lock"></i>
                     <span id="lock-text">Kunci</span>
                 </button>
-                <a href="history.html" class="btn-secondary">Lihat Riwayat</a>
             </div>
-        </header>
+        </div>
 
         <!-- ===== SECRET CONSTRAINT MODAL ===== -->
         <div class="secret-modal-backdrop" id="secret-modal-backdrop">
@@ -59,7 +67,7 @@ pos Humaira 1 2" rows="7"></textarea>
 
                     <div class="secret-modal-actions">
                         <span class="constraints-help-toggle" id="help-toggle">📖 Panduan perintah</span>
-                        <button class="btn-primary" id="save-constraints-btn">Simpan &amp; Tutup</button>
+                        <button class="btn" id="save-constraints-btn">Simpan &amp; Tutup</button>
                     </div>
 
                     <div class="constraints-help" id="constraints-help">
@@ -80,12 +88,12 @@ pos Humaira 1 2" rows="7"></textarea>
             </div>
         </div>
 
-        <section class="seating-section">
+        <div class="seating-grid-container" style="max-width: 1200px; margin: 0 auto; padding: 0 5%;">
             <div class="seating-grid" id="seating-chart">
                 <!-- Seating pairs will be rendered here -->
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
 
     <script src="script.js"></script>
 </body>
