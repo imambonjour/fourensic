@@ -13,12 +13,13 @@ app.use(express.json());
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname), { extensions: ['html'] }));
 
-const CACHE_DIR = path.join(__dirname, 'cache');
-const LOG_FILE = path.join(__dirname, 'logs', 'reshuffle.log');
-const CURRENT_CONFIG_FILE = path.join(__dirname, 'current.json');
+const DATA_DIR = process.env.VERCEL ? '/tmp' : __dirname;
+const CACHE_DIR = path.join(DATA_DIR, 'cache');
+const LOG_FILE = path.join(DATA_DIR, 'logs', 'reshuffle.log');
+const CURRENT_CONFIG_FILE = path.join(DATA_DIR, 'current.json');
 const CURRENT_NAMES_FILE = path.join(__dirname, 'name.csv');
-const LOCK_FILE = path.join(__dirname, 'lock.json');
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'xi4seat'; // Fallback to default if not set
+const LOCK_FILE = path.join(DATA_DIR, 'lock.json');
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'xi4seat';
 
 // Ensure directories exist
 fs.ensureDirSync(CACHE_DIR);
@@ -287,6 +288,10 @@ app.get('/api/history/:filename', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+if (!process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;

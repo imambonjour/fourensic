@@ -73,6 +73,8 @@ function renderSeatingChart(pairs) {
 
         chartElement.appendChild(tableCard);
     });
+
+    document.getElementById('loading-overlay')?.classList.add('hidden');
 }
 
 // ─────────────────────────────────────────────
