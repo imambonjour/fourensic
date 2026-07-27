@@ -18,14 +18,12 @@ const LOG_FILE = path.join(__dirname, 'logs', 'reshuffle.log');
 const CURRENT_CONFIG_FILE = path.join(__dirname, 'current.json');
 const CURRENT_NAMES_FILE = path.join(__dirname, 'name.csv');
 const LOCK_FILE = path.join(__dirname, 'lock.json');
-const SHORT_NAMES_FILE = path.join(__dirname, 'name_short.csv');
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'xi4seat'; // Fallback to default if not set
 
 // Ensure directories exist
 fs.ensureDirSync(CACHE_DIR);
 fs.ensureDirSync(path.dirname(LOG_FILE));
 
-// Get names from CSV (merges full names, short names, and face images)
 app.get('/api/names', async (req, res) => {
     try {
         if (!(await fs.pathExists(CURRENT_NAMES_FILE))) {
@@ -35,24 +33,8 @@ app.get('/api/names', async (req, res) => {
         const lines = csvContent.trim().split('\n');
         const names = lines.map(line => {
             const [nama, gender] = line.split(',').map(s => s.trim());
-            return { nama, gender, shortName: nama }; // default shortName to full name
+            return { nama, gender };
         });
-
-        // Merge short names if the file exists
-        if (await fs.pathExists(SHORT_NAMES_FILE)) {
-            const shortCsv = await fs.readFile(SHORT_NAMES_FILE, 'utf-8');
-            const shortLines = shortCsv.trim().split('\n');
-            const shortMap = {};
-            shortLines.forEach((line, i) => {
-                const [shortName] = line.split(',').map(s => s.trim());
-                // Match by index (same order as name.csv)
-                if (names[i]) shortMap[names[i].nama] = shortName;
-            });
-            names.forEach(n => {
-                if (shortMap[n.nama]) n.shortName = shortMap[n.nama];
-            });
-        }
-
         res.json(names);
     } catch (error) {
         console.error(error);

@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 
 <body>
@@ -40,46 +39,6 @@
                     <i id="lock-icon" class="fa-solid fa-lock"></i>
                     <span id="lock-text">Kunci</span>
                 </button>
-            </div>
-        </div>
-
-        <!-- ===== SECRET CONSTRAINT MODAL ===== -->
-        <div class="secret-modal-backdrop" id="secret-modal-backdrop">
-            <div class="secret-modal" id="secret-modal">
-                <div class="secret-modal-header">
-                    <span class="secret-modal-title">Aturan Tempat Duduk</span>
-                    <span class="secret-modal-badge" id="constraints-badge">0 aturan</span>
-                    <button class="secret-modal-close" id="secret-modal-close" title="Tutup">×</button>
-                </div>
-
-                <div class="secret-modal-body">
-                    <textarea id="constraints-input" class="constraint-input" placeholder="# Satu aturan per baris. Contoh:
-together Ari Habibi
-apart Nabil Tegar
-row Adilah 1
-col Imam 3
-pos Humaira 1 2" rows="7"></textarea>
-
-                    <div class="constraint-tags" id="constraint-tags"></div>
-                    <div class="constraint-errors" id="constraint-errors"></div>
-
-                    <div class="secret-modal-actions">
-                        <span class="constraints-help-toggle" id="help-toggle">Panduan perintah</span>
-                        <button class="btn" id="save-constraints-btn">Simpan &amp; Tutup</button>
-                    </div>
-
-                    <div class="constraints-help" id="constraints-help">
-                        <p><strong>Format: <code>perintah nama [angka]</code></strong></p>
-                        <ul>
-                            <li><code>together Ari Habibi</code> — Paksa satu meja</li>
-                            <li><code>apart Nabil Tegar</code> — Pastikan tidak sebangku</li>
-                            <li><code>row Adilah 2</code> — Tempatkan di baris 2</li>
-                            <li><code>col Imam 3</code> — Tempatkan di kolom 3</li>
-                            <li><code>pos Humaira 1 2</code> — Tempatkan di baris 1, kolom 2</li>
-                            <li><code># komentar</code> — Baris ini diabaikan</li>
-                        </ul>
-                    </div>
-                </div>
             </div>
         </div>
 
