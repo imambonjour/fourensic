@@ -371,10 +371,8 @@ function renderSeatingChart(pairs) {
 
     // Build lookup maps from rawData
     const shortNameMap = {};
-    const faceMap = {};
     (rawData || []).forEach(p => {
         shortNameMap[p.nama] = p.shortName || p.nama;
-        if (p.face) faceMap[p.nama] = p.face;
     });
 
     const totalPairs = pairs.length;
@@ -383,7 +381,6 @@ function renderSeatingChart(pairs) {
 
     pairs.forEach((pair, index) => {
         const [name1, name2, gender, short1, short2] = pair;
-        // Fall back to shortNameMap for pairs loaded from server (old format)
         const displayShort1 = short1 || shortNameMap[name1] || name1;
         const displayShort2 = short2 || shortNameMap[name2] || name2;
 
@@ -399,52 +396,25 @@ function renderSeatingChart(pairs) {
         const tableCard = document.createElement('div');
         tableCard.classList.add('table-card');
 
-        // Check if this card contains IMAM (partial match for names like "Imam Ahmad")
         const hasImam = [name1, name2].some(n => n.toUpperCase().includes('IMAM'));
         if (hasImam) tableCard.dataset.secret = 'imam';
 
         const createSeat = (name, g, shortName) => {
             const seatDiv = document.createElement('div');
-            const effectiveGender = (g === 'L' || g === 'P') ? g : 'L';
-            seatDiv.classList.add('seat-item', effectiveGender);
+            seatDiv.classList.add('seat-item', g);
             if (name === '—') seatDiv.classList.add('empty-seat');
 
-            // Avatar
-            const avatarWrap = document.createElement('div');
-            avatarWrap.classList.add('seat-avatar-wrap');
-
-            if (name !== '—' && faceMap[name]) {
-                const avatarDiv = document.createElement('div');
-                avatarDiv.classList.add('seat-avatar');
-                // Use absolute URL to guarantee compatibility with html2canvas cloning
-                const absoluteSrc = window.location.origin + '/' + faceMap[name];
-                avatarDiv.style.backgroundImage = `url('${absoluteSrc}')`;
-                avatarDiv.style.backgroundSize = 'cover';
-                avatarDiv.style.backgroundPosition = 'center';
-                avatarDiv.style.backgroundRepeat = 'no-repeat';
-                avatarDiv.title = shortName || name;
-                avatarWrap.appendChild(avatarDiv);
-            } else {
-                // Fallback silhouette using an inline SVG to avoid FontAwesome CDN loading errors in html2canvas
-                const placeholder = document.createElement('div');
-                placeholder.classList.add('seat-avatar', 'seat-avatar-placeholder');
-                placeholder.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px; opacity: 0.5; display: block;"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`;
-                avatarWrap.appendChild(placeholder);
-            }
-
-            seatDiv.appendChild(avatarWrap);
-
-            const label = document.createElement('span');
-            label.classList.add('seat-label');
-            label.textContent = g === 'L' ? 'Laki-laki' : (g === 'P' ? 'Perempuan' : '?');
+            const nameShortSpan = document.createElement('span');
+            nameShortSpan.classList.add('name-short');
+            nameShortSpan.textContent = (name === '—') ? '—' : (shortName || name);
 
             const nameFullSpan = document.createElement('span');
             nameFullSpan.classList.add('name-full');
             nameFullSpan.textContent = name;
 
-            const nameShortSpan = document.createElement('span');
-            nameShortSpan.classList.add('name-short');
-            nameShortSpan.textContent = (name === '—') ? '—' : (shortName || name);
+            const label = document.createElement('span');
+            label.classList.add('seat-label');
+            label.textContent = g === 'L' ? 'Laki-laki' : (g === 'P' ? 'Perempuan' : '?');
 
             seatDiv.appendChild(nameShortSpan);
             seatDiv.appendChild(nameFullSpan);
@@ -455,12 +425,9 @@ function renderSeatingChart(pairs) {
         tableCard.appendChild(createSeat(name1, gender, displayShort1));
         tableCard.appendChild(createSeat(name2, gender, displayShort2));
 
-        // Attach 5-tap secret to Imam's card
         if (hasImam) {
             tableCard.addEventListener('click', () => {
-                // Clear any accidental text selection
                 window.getSelection()?.removeAllRanges();
-
                 imamTapCount++;
                 clearTimeout(imamTapTimer);
                 if (imamTapCount >= 5) {

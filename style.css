@@ -705,16 +705,16 @@ footer {
 /* Individual Seat */
 .seat-item {
     flex: 1;
-    padding: 14px 8px 10px;
+    padding: 14px 8px;
     border-radius: var(--radius-medium);
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     text-align: center;
     font-size: 0.85rem;
     font-weight: 600;
-    min-height: 120px;
+    min-height: 80px;
     background-color: var(--primary-bg);
     border: 1px solid rgba(255, 255, 255, 0.02);
     gap: 4px;
@@ -729,51 +729,6 @@ footer {
 .seat-item.P {
     color: var(--female-color);
     border-bottom: 3px solid rgba(220, 138, 221, 0.5);
-}
-
-/* Avatar wrapper */
-.seat-avatar-wrap {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    overflow: hidden;
-    flex-shrink: 0;
-    margin-bottom: 4px;
-    position: relative;
-}
-
-/* Avatar image */
-.seat-avatar {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    transition: transform 0.3s ease;
-    display: block;
-}
-
-.seat-item:hover .seat-avatar {
-    transform: scale(1.08);
-}
-
-/* Gender-colored ring around avatar */
-.seat-item.L .seat-avatar-wrap {
-    box-shadow: 0 0 0 2.5px rgba(98, 160, 234, 0.6);
-}
-
-.seat-item.P .seat-avatar-wrap {
-    box-shadow: 0 0 0 2.5px rgba(220, 138, 221, 0.6);
-}
-
-/* Placeholder avatar (fallback) */
-.seat-avatar-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-gray);
-    font-size: 1.2rem;
 }
 
 .seat-label {
@@ -851,19 +806,9 @@ footer {
 
     /* Smaller seat items to fit 2 side-by-side comfortably */
     .seat-item {
-        padding: 10px 4px 8px;
+        padding: 10px 4px;
         font-size: 0.75rem;
-        min-height: 95px;
-    }
-
-    /* Smaller avatars on mobile */
-    .seat-avatar-wrap {
-        width: 38px;
-        height: 38px;
-    }
-
-    .seat-avatar-placeholder {
-        font-size: 0.9rem;
+        min-height: 70px;
     }
 
     .name-short {

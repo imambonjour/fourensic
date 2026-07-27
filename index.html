@@ -4,132 +4,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOURENSIC | XI-4 Class Management</title>
-    <meta name="description" content="Sistem Manajemen Tempat Duduk Digital untuk Kelas XI-4 FOURENSIC">
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <title>Peta Tempat Duduk • 12-1</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 
-<body class="homepage-body">
-    <header id="main-header">
-        <a href="#" class="logo">
-            <!-- You can use an img tag here if you have a logo image, using text for now -->
-            <span class="logo-text">FOUR<span class="accent-text">ENSIC</span></span>
+<body>
+    <header id="main-header" class="scrolled">
+        <a href="index.html" class="logo">
+            <span class="logo-text">12-<span class="accent-text">1</span></span>
         </a>
-        <div class="mobile-menu-btn">
+        <div class="mobile-menu-btn" onclick="document.querySelector('.nav-menu').classList.toggle('active')">
             <i class="fas fa-bars"></i>
         </div>
         <nav class="nav-menu">
             <ul>
-                <li><a href="#hero">Beranda</a></li>
-                <li><a href="#features">Fitur</a></li>
-                <li><a href="#about">Tentang</a></li>
+                <li><a href="index.html" style="color: var(--accent);">Seating</a></li>
+                <li><a href="history.html">Riwayat</a></li>
             </ul>
         </nav>
     </header>
 
-    <section id="hero" class="hero">
-        <div class="hero-content">
-            <h1>WELCOME TO <span class="accent-text">FOURENSIC</span></h1>
-            <p>Sistem Manajemen Tempat Duduk Digital untuk Kelas XI-4. Kelola dan acak tempat duduk kelas dengan mudah, adil, dan transparan.</p>
-            <a href="#features" class="btn">Mulai Sekarang</a>
-        </div>
-    </section>
-
-    <section id="features" class="features-section">
+    <section class="features-section" style="padding-top: 120px; min-height: 100vh;">
         <div class="section-title">
-            <h2>Fitur <span class="accent-text">Utama</span></h2>
-            <p>Alat manajemen kelas untuk mempermudah kegiatan belajar</p>
+            <h2>Peta <span class="accent-text">Tempat Duduk</span></h2>
+            <div class="header-actions" style="margin-top: 20px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <button id="reshuffle-btn" class="btn">Reshuffle Kursi</button>
+                <button id="download-btn" class="btn btn-outline">Unduh Gambar</button>
+                <button id="lock-btn" class="btn btn-outline">
+                    <i id="lock-icon" class="fa-solid fa-lock"></i>
+                    <span id="lock-text">Kunci</span>
+                </button>
+            </div>
         </div>
 
-        <div class="features-grid">
-            <div class="feature-card" onclick="window.location.href='shuffler.html'">
-                <div class="feature-icon"><i class="fas fa-random"></i></div>
-                <h3>Seating Shuffler</h3>
-                <p>Acak tempat duduk siswa dengan berbagai aturan khusus. Buat formasi yang adil secara otomatis.</p>
-                <div class="feature-action"><i class="fas fa-arrow-right"></i></div>
-            </div>
+        <!-- ===== SECRET CONSTRAINT MODAL ===== -->
+        <div class="secret-modal-backdrop" id="secret-modal-backdrop">
+            <div class="secret-modal" id="secret-modal">
+                <div class="secret-modal-header">
+                    <span class="secret-modal-title">Aturan Tempat Duduk</span>
+                    <span class="secret-modal-badge" id="constraints-badge">0 aturan</span>
+                    <button class="secret-modal-close" id="secret-modal-close" title="Tutup">×</button>
+                </div>
 
-            <div class="feature-card" onclick="window.location.href='groups.html'">
-                <div class="feature-icon"><i class="fas fa-users"></i></div>
-                <h3>Group Maker</h3>
-                <p>Bagi siswa ke dalam kelompok belajar dengan mudah. Mendukung pengaturan distribusi gender yang seimbang.</p>
-                <div class="feature-action"><i class="fas fa-arrow-right"></i></div>
+                <div class="secret-modal-body">
+                    <textarea id="constraints-input" class="constraint-input" placeholder="# Satu aturan per baris. Contoh:
+together Ari Habibi
+apart Nabil Tegar
+row Adilah 1
+col Imam 3
+pos Humaira 1 2" rows="7"></textarea>
+
+                    <div class="constraint-tags" id="constraint-tags"></div>
+                    <div class="constraint-errors" id="constraint-errors"></div>
+
+                    <div class="secret-modal-actions">
+                        <span class="constraints-help-toggle" id="help-toggle">Panduan perintah</span>
+                        <button class="btn" id="save-constraints-btn">Simpan &amp; Tutup</button>
+                    </div>
+
+                    <div class="constraints-help" id="constraints-help">
+                        <p><strong>Format: <code>perintah nama [angka]</code></strong></p>
+                        <ul>
+                            <li><code>together Ari Habibi</code> — Paksa satu meja</li>
+                            <li><code>apart Nabil Tegar</code> — Pastikan tidak sebangku</li>
+                            <li><code>row Adilah 2</code> — Tempatkan di baris 2</li>
+                            <li><code>col Imam 3</code> — Tempatkan di kolom 3</li>
+                            <li><code>pos Humaira 1 2</code> — Tempatkan di baris 1, kolom 2</li>
+                            <li><code># komentar</code> — Baris ini diabaikan</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            
-            <div class="feature-card" onclick="window.location.href='history.html'">
-                <div class="feature-icon"><i class="fas fa-history"></i></div>
-                <h3>Riwayat</h3>
-                <p>Lihat dan kembalikan formasi tempat duduk yang pernah dibuat sebelumnya tanpa harus mengacak ulang.</p>
-                <div class="feature-action"><i class="fas fa-arrow-right"></i></div>
+        </div>
+
+        <div class="seating-grid-container" style="max-width: 1200px; margin: 0 auto; padding: 0 5%;">
+            <div class="seating-grid" id="seating-chart">
+                <!-- Seating pairs will be rendered here -->
             </div>
         </div>
     </section>
 
-    <section id="about" class="about-section">
-        <div class="about-container">
-            <h2>Tentang <span class="accent-text">XI-4 FOURENSIC</span></h2>
-            <p>
-                FOURENSIC adalah identitas dari kelas XI-4. Aplikasi web ini dibangun secara khusus untuk membantu 
-                wali kelas dan pengurus kelas dalam mengatur posisi tempat duduk serta pembentukan kelompok belajar.
-                Dengan algoritma pengacakan yang pintar, kami memastikan setiap siswa mendapatkan kesempatan
-                berinteraksi yang sama dengan teman sekelasnya.
-            </p>
-        </div>
-    </section>
-
-    <footer id="contact">
-        <div class="footer-content">
-            <div class="logo-footer">
-                <span class="logo-text large">FOUR<span class="accent-text">ENSIC</span></span>
-            </div>
-            <p class="copyright">&copy; 2026 Kelas XI-4 FOURENSIC. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script>
-        // Simple sticky header and mobile menu functionality
-        document.addEventListener('DOMContentLoaded', () => {
-            const header = document.getElementById('main-header');
-            const mobileBtn = document.querySelector('.mobile-menu-btn');
-            const navMenu = document.querySelector('.nav-menu');
-
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                }
-            });
-
-            if (mobileBtn) {
-                mobileBtn.addEventListener('click', () => {
-                    navMenu.classList.toggle('active');
-                });
-            }
-
-            // Random Hero Background Image
-            const heroImages = [
-                'assets/images/Zahirah%20siregar03747.JPG',
-                'assets/images/Zahirah%20siregar03755.JPG',
-                'assets/images/Zahirah%20siregar03801.JPG',
-                'assets/images/Zahirah%20siregar03802.JPG',
-                'assets/images/cowboy_win.jpeg'
-            ];
-            const randomImg = heroImages[Math.floor(Math.random() * heroImages.length)];
-            const heroSection = document.getElementById('hero');
-            if (heroSection) {
-                heroSection.style.backgroundImage = `linear-gradient(rgba(28, 19, 17, 0.8), rgba(28, 19, 17, 0.9)), url('${randomImg}')`;
-                heroSection.style.backgroundPosition = 'center';
-                heroSection.style.backgroundSize = 'cover';
-                heroSection.style.backgroundRepeat = 'no-repeat';
-            }
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>

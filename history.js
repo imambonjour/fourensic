@@ -164,7 +164,7 @@ async function restoreConfig(filename) {
         }
 
         alert('Konfigurasi berhasil dikembalikan! Mengalihkan ke halaman utama...');
-        window.location.href = 'shuffler.html';
+        window.location.href = 'index.html';
     } catch (error) {
         console.error("Error restoring config:", error);
         alert(`Gagal: ${error.message}`);
