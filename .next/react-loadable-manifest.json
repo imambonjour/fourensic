@@ -1,8 +1,8 @@
 {
   "app/page.js -> html2canvas": {
-    "id": 4264,
+    "id": "app/page.js -> html2canvas",
     "files": [
-      "static/chunks/ad2866b8.3a53275943d3b1db.js"
+      "static/chunks/_app-pages-browser_node_modules_html2canvas_dist_html2canvas_js.js"
     ]
   }
 }

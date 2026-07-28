@@ -106,7 +106,7 @@ export default function SeatingPage() {
         <div id="loading-overlay">
           <div className="spinner">
             <div className="spinner-ring" />
-            <span className="spinner-text">fourensic</span>
+            <span className="spinner-text">imambonjour</span>
           </div>
         </div>
       )}

@@ -1,3 +1,6 @@
+/*!*************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/globals.css ***!
+  \*************************************************************************************************************************************************************************************************************************************************************/
 /* ─── Variables ────────────────────────────────────────────────────────── */
 :root {
   --primary-bg: #ffffff;
@@ -118,7 +121,8 @@ header {
   z-index: 1000;
   background: rgba(255, 255, 255, 0.97);
   border-bottom: 1px solid var(--card-border);
-  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+          backdrop-filter: blur(8px);
   transition: padding var(--transition), box-shadow var(--transition);
 }
 
@@ -311,7 +315,7 @@ nav ul li a:hover { color: var(--accent); }
 }
 
 .seat-item {
-  flex: 1;
+  flex: 1 1;
   padding: 12px 8px;
   border-radius: var(--radius-medium);
   display: flex;
@@ -389,7 +393,8 @@ nav ul li a:hover { color: var(--accent); }
   height: 100%;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+          backdrop-filter: blur(4px);
   padding-top: 50px;
 }
 
@@ -639,3 +644,4 @@ nav ul li a:hover { color: var(--accent); }
   .history-item { flex-direction: column; align-items: flex-start; gap: 12px; }
   .history-action { width: 100%; justify-content: flex-end; }
 }
+

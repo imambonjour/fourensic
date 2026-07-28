@@ -1,16 +1,5 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/api/config/latest/route": "app/api/config/latest/route.js",
-  "/api/config/route": "app/api/config/route.js",
-  "/api/history/[filename]/restore/route": "app/api/history/[filename]/restore/route.js",
-  "/api/history/[filename]/route": "app/api/history/[filename]/route.js",
-  "/api/history/route": "app/api/history/route.js",
   "/api/lock/route": "app/api/lock/route.js",
-  "/api/names/route": "app/api/names/route.js",
-  "/api/settings/clear-history/route": "app/api/settings/clear-history/route.js",
-  "/api/settings/names/route": "app/api/settings/names/route.js",
-  "/api/settings/password/route": "app/api/settings/password/route.js",
-  "/history/page": "app/history/page.js",
-  "/page": "app/page.js",
-  "/settings/page": "app/settings/page.js"
+  "/api/config/latest/route": "app/api/config/latest/route.js",
+  "/page": "app/page.js"
 }
