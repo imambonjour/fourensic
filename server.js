@@ -21,12 +21,18 @@ const CURRENT_NAMES_FILE = path.join(__dirname, 'name.csv');
 const LOCK_FILE = path.join(DATA_DIR, 'lock.json');
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'xi4seat';
 
-// Ensure directories exist
-fs.ensureDirSync(CACHE_DIR);
-fs.ensureDirSync(path.dirname(LOG_FILE));
+// Lazy async init — avoids sync filesystem ops at module load (Vercel cold-start safe)
+let _initialized = false;
+async function ensureDirs() {
+    if (_initialized) return;
+    await fs.ensureDir(CACHE_DIR);
+    await fs.ensureDir(path.dirname(LOG_FILE));
+    _initialized = true;
+}
 
 app.get('/api/names', async (req, res) => {
     try {
+        await ensureDirs();
         if (!(await fs.pathExists(CURRENT_NAMES_FILE))) {
             return res.status(404).json({ error: 'name.csv not found' });
         }
@@ -60,6 +66,7 @@ async function getLockState() {
 
 app.get('/api/lock', async (req, res) => {
     try {
+        await ensureDirs();
         const lockState = await getLockState();
         res.json(lockState);
     } catch (error) {
@@ -69,6 +76,7 @@ app.get('/api/lock', async (req, res) => {
 
 app.post('/api/lock', async (req, res) => {
     try {
+        await ensureDirs();
         const { action, password } = req.body;
         if (password !== ADMIN_PASSWORD) {
             return res.status(403).json({ error: 'Invalid password' });
@@ -96,6 +104,7 @@ app.post('/api/lock', async (req, res) => {
 // Get the latest config
 app.get('/api/config/latest', async (req, res) => {
     try {
+        await ensureDirs();
         if (await fs.pathExists(CURRENT_CONFIG_FILE)) {
             const content = await fs.readJson(CURRENT_CONFIG_FILE);
             return res.json(content);
@@ -119,6 +128,7 @@ app.get('/api/config/latest', async (req, res) => {
 // Save a new config
 app.post('/api/config', async (req, res) => {
     try {
+        await ensureDirs();
         // Check lock status before allowing save
         const lockState = await getLockState();
         if (lockState.locked) {
@@ -172,6 +182,7 @@ app.post('/api/config', async (req, res) => {
 // Get history of configs
 app.get('/api/history', async (req, res) => {
     try {
+        await ensureDirs();
         const files = await fs.readdir(CACHE_DIR);
         // Sort by filename descending
         const history = files
@@ -215,6 +226,7 @@ app.get('/api/history', async (req, res) => {
 // Restoration endpoint: Restore a specific config from cache
 app.post('/api/history/restore/:filename', async (req, res) => {
     try {
+        await ensureDirs();
         const { filename } = req.params;
         // SECURITY: Sanitize filename to prevent Path Traversal
         const safeFilename = path.basename(filename);
@@ -272,6 +284,7 @@ app.post('/api/history/restore/:filename', async (req, res) => {
 // Get specific config
 app.get('/api/history/:filename', async (req, res) => {
     try {
+        await ensureDirs();
         const { filename } = req.params;
         // SECURITY: Sanitize filename to prevent Path Traversal
         const safeFilename = path.basename(filename);
