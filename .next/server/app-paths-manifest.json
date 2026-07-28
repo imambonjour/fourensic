@@ -1,5 +1,0 @@
-{
-  "/api/lock/route": "app/api/lock/route.js",
-  "/api/config/latest/route": "app/api/config/latest/route.js",
-  "/page": "app/page.js"
-}

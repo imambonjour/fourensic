@@ -1,8 +1,8 @@
 node_modules/
+.next/
 .env
-cache/*.json
 current.json
 lock.json
 logs/
 name.csv
-lock.json
+.Rhistory
