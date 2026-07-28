@@ -16,7 +16,7 @@ export default function SeatingChart({ pairs, containerId = 'seating-chart' }) {
       {pairs.map((pair, idx) => {
         const [name1, name2, gender] = pair;
         return (
-          <div key={idx} className="table-card">
+          <div key={idx} className={`table-card ${gender}`}>
             <SeatItem name={name1} gender={gender} />
             <SeatItem name={name2} gender={gender} />
           </div>
@@ -29,7 +29,7 @@ export default function SeatingChart({ pairs, containerId = 'seating-chart' }) {
 function SeatItem({ name, gender }) {
   const isEmpty = name === '—';
   return (
-    <div className={`seat-item ${gender}${isEmpty ? ' empty-seat' : ''}`}>
+    <div className={`seat-item${isEmpty ? ' empty-seat' : ''}`}>
       <span className="seat-label">
         {gender === 'L' ? 'Laki-laki' : 'Perempuan'}
       </span>
